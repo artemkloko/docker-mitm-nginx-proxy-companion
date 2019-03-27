@@ -45,3 +45,9 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 ```
+
+---
+
+Full guide:
+
+[Mocking domain names in a maintainable and scalable way](https://medium.com/@artemkloko/mocking-domain-names-in-a-maintainable-and-scalable-way-def29e5e5e32)
