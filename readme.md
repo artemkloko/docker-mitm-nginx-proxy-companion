@@ -44,7 +44,16 @@ services:
       - "mitmproxy.proxyVirtualHosts=true"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  example-one:
+    environment:
+      VIRTUAL_HOST: example-one.com
+    image: nginx:alpine
 ```
+
+- Run `docker-compose up`
+- Add a proxy extension to your browser, with proxy address being `127.0.0.1:8080`
+- Access `http://example-one.com`
 
 ---
 
