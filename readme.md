@@ -60,3 +60,5 @@ services:
 Full guide:
 
 [Mocking domain names in a maintainable and scalable way](https://medium.com/@artemkloko/mocking-domain-names-in-a-maintainable-and-scalable-way-def29e5e5e32)
+
+This guide goes through some of the techniques used to locally mock domain names, briefly explains why they are not suitable and resolves those issues with the use of mitm-nginx-proxy-companion.
