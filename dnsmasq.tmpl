@@ -1,34 +1,27 @@
-{{/* The following was copied from https://github.com/jderusse/docker-dns-gen/blob/master/config/dnsmasq.tmpl */}}
+{{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
 
-{{ define "host" }}
-    {{ $host := .Host }}
-    {{ $tld := .Tld }}
-    {{ if eq $tld "" }}
-        {{ range $index, $network := .Container.Networks }}
-            {{ if ne $network.IP "" }}
-address=/{{ $host }}/{{ $network.IP }}
-            {{ end }}
-        {{ end }}
-    {{ else }}
-        {{ range $index, $network := .Container.Networks }}
-            {{ if ne $network.IP "" }}
-address=/{{ $host }}.{{ $tld }}/{{ $network.IP }}
-address=/{{ $host }}.{{ $network.Name }}.{{ $tld }}/{{ $network.IP }}
-            {{ end }}
-        {{ end }}
-    {{ end }}
-{{ end }}
-
-{{/* The following was added by me in order to resolve containers with Env.VIRTUAL_HOST through container with Labels.mitmproxy.proxyVirtualHosts */}}
+{{/* Search through containers' labels to find where to proxy the virtual hosts to */}}
 
 {{ range $index, $proxyContainer := $ }}
     {{ if eq (index $proxyContainer.Labels "mitmproxy.proxyVirtualHosts") "true" }}
-        {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
-            {{ $host := trimPrefix "*" $host }}
-            {{ range $index, $container := $containers }}
-                {{ template "host" (dict "Container" $proxyContainer "Host" $host "Tld" "") }}
+
+        {{/* Compare the networks of the proxy container with the current container to find a common network */}}
+
+        {{ range $index, $network := $proxyContainer.Networks }}
+            {{ range $currentIndex, $currentNetwork := $CurrentContainer.Networks }}
+                {{ if eq $network.Name $currentNetwork.Name }}
+
+                    {{/* Collect the virtual hosts, and proxy them to the reverse proxy */}}
+                    
+                    {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
+                        {{ $host := trimPrefix "*" $host }}
+address=/{{ $host }}/{{ $network.IP }}
+                    {{ end }}
+
+                {{ end }}
             {{ end }}
         {{ end }}
+
     {{ end }}
 {{ end }}
 
