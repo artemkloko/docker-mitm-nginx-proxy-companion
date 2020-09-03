@@ -1,4 +1,4 @@
-FROM mitmproxy/mitmproxy
+FROM mitmproxy/mitmproxy:5.2
 
 LABEL maintainer="artemkloko <artemkloko@gmail.com>"
 
