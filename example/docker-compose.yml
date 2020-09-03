@@ -3,7 +3,7 @@ version: '3.3'
 services:
 
   nginx-proxy-mitm:
-    command: mitmweb --web-iface 0.0.0.0 --set web_open_browser=false --ssl-insecure
+    command: mitmweb --web-host 0.0.0.0 --no-web-open-browser --ssl-insecure
     dns:
       - 127.0.0.1
     image: artemkloko/mitm-nginx-proxy-companion
@@ -55,7 +55,7 @@ services:
     environment:
       - CERT_NAME=self-signed
       - HTTPS_METHOD=noredirect
-      - VIRTUAL_HOST=*.google.com
+      - VIRTUAL_HOST=*.google.com, google.com
     image: nginx:alpine
     volumes:
       - ./google-static/default.conf:/etc/nginx/conf.d/default.conf
